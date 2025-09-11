@@ -1,0 +1,30 @@
+# Python cache / compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+env/
+venv/
+
+# Environment / secret files
+*.env
+.env
+
+# OS files
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Byte-compiled C extensions
+*.so
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
