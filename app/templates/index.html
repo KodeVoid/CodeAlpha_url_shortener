@@ -11,44 +11,45 @@
   <nav class="w-full bg-blue-600 text-white p-4 text-center">
     <h1 class="text-xl font-bold">URL Shortener</h1>
   </nav>
-<main class="mt-10 w-full max-w-md">
-  <form id="shortenForm" class="flex flex-col gap-4 bg-white p-6 rounded-lg shadow">
-    <label for="url" class="text-gray-700 font-medium">Enter a URL</label>
-    <input 
-      id="url" 
-      name="url" 
-      type="text" 
-      placeholder="https://example.com" 
-      class="border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      required
-    >
-    <button 
-      type="submit" 
-      class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
-    >
-      Shorten
-    </button>
-  </form>
 
-  <!-- Results section -->
-  <div id="result" class="hidden mt-4 bg-white p-4 rounded-lg shadow">
-    <p class="text-gray-700 font-medium">Your shortened URL:</p>
-    <div class="flex items-center gap-2 mt-2">
+  <main class="mt-10 w-full max-w-md">
+    <form id="shortenForm" class="flex flex-col gap-4 bg-white p-6 rounded-lg shadow">
+      <label for="url" class="text-gray-700 font-medium">Enter a URL</label>
       <input 
-        id="shortUrl" 
+        id="url" 
+        name="url" 
         type="text" 
-        readonly 
-        class="flex-1 border border-gray-300 rounded p-2 text-blue-600 font-medium"
+        placeholder="https://example.com" 
+        class="border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        required
       >
       <button 
-        id="copyBtn" 
-        class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-3 rounded"
+        type="submit" 
+        class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
       >
-        Copy
+        Shorten
       </button>
+    </form>
+
+    <!-- Results section -->
+    <div id="result" class="hidden mt-4 bg-white p-4 rounded-lg shadow">
+      <p class="text-gray-700 font-medium">Your shortened URL:</p>
+      <div class="flex items-center gap-2 mt-2">
+        <input 
+          id="shortUrl" 
+          type="text" 
+          readonly 
+          class="flex-1 border border-gray-300 rounded p-2 text-blue-600 font-medium"
+        >
+        <button 
+          id="copyBtn" 
+          class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-3 rounded"
+        >
+          Copy
+        </button>
+      </div>
     </div>
-  </div>
-</main>
+  </main>
 
 <script>
   const form = document.getElementById("shortenForm");
@@ -74,8 +75,6 @@
       }
 
       const data = await response.json();
-      
-      // Assuming backend returns { "short_url": "https://..." }
       shortUrlInput.value = data.short_url;
       resultDiv.classList.remove("hidden");
     } catch (err) {
@@ -87,29 +86,9 @@
     shortUrlInput.select();
     navigator.clipboard.writeText(shortUrlInput.value).then(() => {
       copyBtn.textContent = "Copied!";
-      setTimeout(() => copyBtn.textContent = "Copy", 2000);
+      setTimeout(() => (copyBtn.textContent = "Copy"), 2000);
     });
   });
 </script>
-
-  <script>
-    const form = document.getElementById("shortenForm");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      
-      const url = document.getElementById("url").value;
-      console.log("Submitting:", url);
-
-      // Example: send to your Flask backend
-      const response = await fetch("/short", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ "url":url }),
-      });
-
-      const data = await response.json();
-      console.log("Shortened:", data);
-    });
-  </script>
 </body>
 </html>

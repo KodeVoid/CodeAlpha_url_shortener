@@ -36,41 +36,49 @@ def index():
 
 @app.route('/short', methods=['POST'])
 def shorten():
-    url = request.form.get("url")
+    url = request.json.get("url") if request.is_json else request.form.get("url")
     if not url:
         return jsonify({"error": "URL is required"}), 400
-    
+
     conn = get_db_connection()
     cur = conn.cursor()
-    
+
     try:
+        # Find or insert long URL
         cur.execute("SELECT id FROM urls WHERE long_url = %s;", (url,))
-        existing = cur.fetchone()
-        
-        if existing:
-            url_id = existing[0]
+        row = cur.fetchone()
+        if row:
+            url_id = row[0]
         else:
             cur.execute("INSERT INTO urls (long_url) VALUES (%s) RETURNING id;", (url,))
             url_id = cur.fetchone()[0]
-        
-        # Generate a unique shortcode with retry limit
-        max_retries = 10
-        for attempt in range(max_retries):
-            code = generate_code()
-            try:
-                cur.execute("INSERT INTO shortcodes (url_id, code) VALUES (%s, %s);", (url_id, code))
-                conn.commit()
-                break
-            except Exception as e:
-                # Code already exists, try again
-                if attempt == max_retries - 1:
-                    return jsonify({"error": "Could not generate unique code"}), 500
-                continue
-        
+            conn.commit()
+
+        # Check for existing shortcode
+        cur.execute("SELECT code FROM shortcodes WHERE url_id = %s;", (url_id,))
+        row = cur.fetchone()
+        if row:
+            code = row[0]
+        else:
+            # Try to insert new shortcode with retries
+            for attempt in range(10):
+                code = generate_code()
+                try:
+                    cur.execute("INSERT INTO shortcodes (url_id, code) VALUES (%s, %s);", (url_id, code))
+                    conn.commit()
+                    break
+                except Exception as e:
+                    conn.rollback()
+                    if attempt == 9:
+                        app.logger.error(f"Failed to insert shortcode: {e}")
+                        return jsonify({"error": "Could not generate unique code"}), 500
+                    continue
+
         return jsonify({"short_url": f"{base_url}/{code}"})
-        
+
     except Exception as e:
         conn.rollback()
+        app.logger.error(f"Database error: {e}")
         return jsonify({"error": "Database error"}), 500
     finally:
         cur.close()
