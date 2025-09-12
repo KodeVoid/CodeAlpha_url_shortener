@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+  
+  <nav class="w-full bg-blue-600 text-white p-4 text-center">
+    <h1 class="text-xl font-bold">URL Shortener</h1>
+  </nav>
+
+  <main class="mt-10 w-full max-w-md">
+    <form id="shortenForm" class="flex flex-col gap-4 bg-white p-6 rounded-lg shadow">
+      <label for="url" class="text-gray-700 font-medium">Enter a URL</label>
+      <input 
+        id="url" 
+        name="url" 
+        type="text" 
+        placeholder="https://example.com" 
+        class="border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+      <button 
+        type="submit" 
+        class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
+      >
+        Shorten
+      </button>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById("shortenForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const url = document.getElementById("url").value;
+      console.log("Submitting:", url);
+
+      // Example: send to your Flask backend
+      const response = await fetch("/shorten", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+
+      const data = await response.json();
+      console.log("Shortened:", data);
+    });
+  </script>
+</body>
+</html>

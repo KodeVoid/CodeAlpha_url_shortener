@@ -1,6 +1,7 @@
 import os
+from dotenv import load_dotenv
 import psycopg2
-
+load_dotenv()
 def get_db_connection():
     try:
         database_url = os.environ["DATABASE_URL"] 
@@ -12,3 +13,5 @@ def get_db_connection():
         return conn
     except psycopg2.Error as e:
         raise RuntimeError(f"Database connection failed: {e}")
+
+
