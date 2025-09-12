@@ -2,9 +2,29 @@
 from flask import Flask, render_template, request, jsonify, redirect
 from app.connect_db import get_db_connection
 import string
+from dotenv import load_dotenv
 import random
+import os
+import sys
 
 app = Flask(__name__)
+load_dotenv()
+
+# Abort program if BASE_URL is not set
+try:
+    base_url = os.environ["BASE_URL"]
+    if not base_url.strip():  # Check if empty or whitespace only
+        raise ValueError("BASE_URL cannot be empty")
+except KeyError:
+    print("❌ ERROR: BASE_URL environment variable is required!")
+    print("📝 Please set BASE_URL in your environment")
+    sys.exit(1)
+except ValueError as e:
+    print(f"❌ ERROR: {e}")
+    print("📝 Please set a valid BASE_URL in your environment")
+    sys.exit(1)
+
+print(f"✅ Using BASE_URL: {base_url}")
 
 def generate_code(length=6):
     chars = string.ascii_letters + string.digits
@@ -24,14 +44,12 @@ def shorten():
     cur = conn.cursor()
     
     try:
-        # Check if URL already exists
         cur.execute("SELECT id FROM urls WHERE long_url = %s;", (url,))
         existing = cur.fetchone()
         
         if existing:
             url_id = existing[0]
         else:
-            # Insert the original URL
             cur.execute("INSERT INTO urls (long_url) VALUES (%s) RETURNING id;", (url,))
             url_id = cur.fetchone()[0]
         
@@ -49,7 +67,7 @@ def shorten():
                     return jsonify({"error": "Could not generate unique code"}), 500
                 continue
         
-        return jsonify({"short_url": f"http://localhost:5000/{code}"})
+        return jsonify({"short_url": f"{base_url}/{code}"})
         
     except Exception as e:
         conn.rollback()
