@@ -14,9 +14,9 @@ class Routes(object):
     
     def register_routes(self):  # Fixed: Added self parameter
         # Fixed: Correct syntax for route registration
-        self.app.route('/v1/urls', methods=['GET'])(self.get_urls)
-        self.app.route('/v1/urls', methods=['POST'])(self.create_short_url)
-        self.app.route('/v1/urls/<id>', methods=['GET'])(self.get_url)  # Fixed: Added missing /
+        self.app.route('/urls', methods=['GET'])(self.get_urls)
+        self.app.route('/urls', methods=['POST'])(self.create_short_url)
+        self.app.route('/urls/<id>', methods=['GET'])(self.get_url)  # Fixed: Added missing /
         self.app.route('/<id>/redirect', methods=['GET'])(self.redirect_to_original_url)  # Fixed: Better route pattern
     
     def generate_code(self, length=6):
