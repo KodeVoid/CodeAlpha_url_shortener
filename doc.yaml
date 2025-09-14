@@ -1,0 +1,406 @@
+openapi: 3.0.3
+info:
+  title: Code Alpha URL Shortener API
+  version: "2.0"
+  description: |
+    A comprehensive URL shortening service built as part of the Code Alpha internship task.
+    
+    Features:
+    - Create shortened URLs from long URLs
+    - Retrieve paginated lists of all shortened URLs
+    - Get specific URL details by ID
+    - Redirect users from short codes to original URLs
+    - Analytics tracking (click counts)
+  contact:
+    name: Code Alpha Intern
+    url: https://www.linkedin.com/in/kodevoid
+
+servers:
+  - url: http://localhost:5000
+    description: Development server (Base URL for redirects)
+  - url: http://localhost:5000/v1
+    description: API server (v1 API endpoints)
+
+paths:
+  # API Endpoints
+  /urls:
+    get:
+      summary: Get all shortened URLs
+      description: |
+        Returns a paginated list of all shortened URLs, sorted by creation date (newest first).
+        Supports pagination with page and limit parameters.
+      operationId: getUrls
+      tags:
+        - URLs
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+            example: 10
+      responses:
+        '200':
+          description: Successfully retrieved paginated list of URLs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUrlResponse'
+              examples:
+                success_response:
+                  summary: Successful response with URLs
+                  value:
+                    page: 1
+                    limit: 10
+                    totalPages: 1
+                    totalItems: 3
+                    items:
+                      - id: "abc123"
+                        shortUrl: "http://localhost:5000/abc123"
+                        longUrl: "https://www.google.com"
+                        clickCount: 0
+                      - id: "def456"
+                        shortUrl: "http://localhost:5000/def456"
+                        longUrl: "https://www.github.com"
+                        clickCount: 15
+        '400':
+          description: Invalid pagination parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "validation_error"
+                message: "Page and limit must be positive integers"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "internal_error"
+                message: "An unexpected error occurred while retrieving URLs"
+    
+    post:
+      summary: Create a shortened URL
+      description: |
+        Creates a shortened URL for the provided long URL. 
+        Optionally accepts a custom code for the short URL.
+      operationId: createShortUrl
+      tags:
+        - URLs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUrlRequest'
+            examples:
+              basic_url:
+                summary: Basic URL shortening
+                value:
+                  longUrl: "https://www.google.com"
+              url_with_custom_code:
+                summary: URL with custom code
+                value:
+                  longUrl: "https://www.example.com/very/long/path"
+                  customCode: "mycode"
+      responses:
+        '201':
+          description: Successfully created shortened URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UrlItem'
+              examples:
+                new_short_url:
+                  summary: Newly created short URL
+                  value:
+                    id: "xyz789"
+                    shortUrl: "http://localhost:5000/xyz789"
+                    longUrl: "https://www.google.com"
+                    clickCount: 0
+        '400':
+          description: Invalid request - missing or invalid URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                missing_url:
+                  summary: Missing longUrl field
+                  value:
+                    error: "validation_error"
+                    message: "longUrl is required"
+                invalid_url:
+                  summary: Invalid URL format
+                  value:
+                    error: "validation_error"
+                    message: "URL must start with http:// or https://"
+        '409':
+          description: Custom code already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "conflict_error"
+                message: "Custom code already exists"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "internal_error"
+                message: "Failed to create short URL"
+
+  /urls/{id}:
+    get:
+      summary: Get a specific URL by ID
+      description: |
+        Retrieves details of a specific shortened URL by its short code ID.
+      operationId: getUrlById
+      tags:
+        - URLs
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The short code identifier
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9]+$'
+            example: "abc123"
+      responses:
+        '200':
+          description: Successfully retrieved URL details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UrlItem'
+              example:
+                id: "abc123"
+                shortUrl: "http://localhost:5000/abc123"
+                longUrl: "https://www.google.com"
+                clickCount: 42
+        '404':
+          description: URL not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "not_found"
+                message: "URL not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "internal_error"
+                message: "An unexpected error occurred"
+
+  # Redirect Endpoints
+  /{id}/redirect:
+    get:
+      summary: Redirect to original URL
+      description: |
+        Redirects the user to the original long URL associated with the short code.
+        This endpoint increments the click count for analytics.
+      operationId: redirectToOriginalUrl
+      tags:
+        - Redirects
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The short code to redirect
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9]+$'
+            example: "abc123"
+      responses:
+        '302':
+          description: Redirect to the original URL
+          headers:
+            Location:
+              description: The original long URL
+              schema:
+                type: string
+                format: uri
+                example: "https://www.google.com"
+        '404':
+          description: Short URL not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "not_found"
+                message: "Short URL not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "internal_error"
+                message: "An unexpected error occurred"
+
+components:
+  schemas:
+    UrlItem:
+      type: object
+      description: A shortened URL item
+      properties:
+        id:
+          type: string
+          description: The short code identifier
+          example: "abc123"
+        shortUrl:
+          type: string
+          format: uri
+          description: The complete shortened URL
+          example: "http://localhost:5000/abc123"
+        longUrl:
+          type: string
+          format: uri
+          description: The original long URL
+          example: "https://www.google.com"
+        clickCount:
+          type: integer
+          description: Number of times this short URL has been clicked
+          minimum: 0
+          example: 42
+      required:
+        - id
+        - shortUrl
+        - longUrl
+        - clickCount
+
+    CreateUrlRequest:
+      type: object
+      description: Request payload for creating a shortened URL
+      properties:
+        longUrl:
+          type: string
+          format: uri
+          description: The long URL to be shortened
+          example: "https://www.example.com/very/long/path/to/resource"
+        customCode:
+          type: string
+          description: Optional custom short code (if not provided, one will be generated)
+          pattern: '^[a-zA-Z0-9]+$'
+          minLength: 1
+          maxLength: 50
+          example: "mycode"
+      required:
+        - longUrl
+
+    PaginatedUrlResponse:
+      type: object
+      description: Paginated response containing URL items
+      properties:
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        limit:
+          type: integer
+          description: Number of items per page
+          example: 10
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 3
+        totalItems:
+          type: integer
+          description: Total number of shortened URLs
+          example: 25
+        items:
+          type: array
+          description: List of shortened URL objects
+          items:
+            $ref: '#/components/schemas/UrlItem'
+      required:
+        - page
+        - limit
+        - totalPages
+        - totalItems
+        - items
+
+    Error:
+      type: object
+      description: Standard error response
+      properties:
+        error:
+          type: string
+          description: Error code identifier
+          example: "validation_error"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "longUrl is required"
+        details:
+          type: object
+          description: Additional error details (optional)
+          additionalProperties: true
+      required:
+        - error
+        - message
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number for pagination
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+    LimitParam:
+      name: limit
+      in: query
+      description: Number of items per page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+
+    ShortCodeParam:
+      name: id
+      in: path
+      required: true
+      description: The short code to redirect
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9]+$'
+
+tags:
+  - name: URLs
+    description: Operations for managing shortened URLs
+  - name: Redirects
+    description: Operations for redirecting short URLs
