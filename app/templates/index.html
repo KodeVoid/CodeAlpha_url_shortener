@@ -4,91 +4,442 @@
   <meta charset="UTF-8">
   <script src="https://cdn.tailwindcss.com"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>URL Shortener</title>
+  <title>Code Alpha URL Shortener</title>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-blue': '#0066cc',
+            'brand-dark': '#004499',
+            'brand-light': '#e6f3ff'
+          },
+          fontFamily: {
+            'sans': ['Inter', 'ui-sans-serif', 'system-ui']
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
   
-  <nav class="w-full bg-blue-600 text-white p-4 text-center">
-    <h1 class="text-xl font-bold">URL Shortener</h1>
+  <!-- Navigation -->
+  <nav class="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gradient-to-r from-brand-blue to-brand-dark rounded-xl flex items-center justify-center">
+            <i class="fas fa-link text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900">Code Alpha</h1>
+            <p class="text-sm text-gray-600">URL Shortener</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="/api-docs" class="text-gray-600 hover:text-brand-blue transition-colors font-medium">
+            <i class="fas fa-book mr-2"></i>API Docs
+          </a>
+          <a href="https://github.com/yourusername/url-shortener" target="_blank" class="text-gray-600 hover:text-brand-blue transition-colors font-medium">
+            <i class="fab fa-github mr-2"></i>GitHub
+          </a>
+        </div>
+      </div>
+    </div>
   </nav>
 
-  <main class="mt-10 w-full max-w-md">
-    <form id="shortenForm" class="flex flex-col gap-4 bg-white p-6 rounded-lg shadow">
-      <label for="url" class="text-gray-700 font-medium">Enter a URL</label>
-      <input 
-        id="url" 
-        name="url" 
-        type="text" 
-        placeholder="https://example.com" 
-        class="border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        required
-      >
-      <button 
-        type="submit" 
-        class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
-      >
-        Shorten
-      </button>
-    </form>
+  <!-- Hero Section -->
+  <section class="pt-16 pb-12">
+    <div class="max-w-4xl mx-auto text-center px-6">
+      <div class="mb-8">
+        <div class="inline-flex items-center bg-brand-light text-brand-dark px-4 py-2 rounded-full text-sm font-medium mb-6">
+          <i class="fas fa-rocket mr-2"></i>
+          Built for Code Alpha Internship
+        </div>
+        <h2 class="text-5xl font-bold text-gray-900 mb-6 leading-tight">
+          Shorten Your URLs with
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-dark">Style</span>
+        </h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          Transform long, unwieldy URLs into clean, shareable links. Our advanced URL shortener provides analytics, 
+          custom codes, and reliable redirects for all your link management needs.
+        </p>
+      </div>
+      
+      <!-- Features Grid -->
+      <div class="grid md:grid-cols-4 gap-6 mb-12">
+        <div class="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 hover:shadow-lg transition-all duration-300">
+          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+            <i class="fas fa-tachometer-alt text-green-600 text-xl"></i>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2">Lightning Fast</h3>
+          <p class="text-sm text-gray-600">Instant URL shortening with optimized performance</p>
+        </div>
+        <div class="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 hover:shadow-lg transition-all duration-300">
+          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+            <i class="fas fa-chart-bar text-blue-600 text-xl"></i>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2">Analytics</h3>
+          <p class="text-sm text-gray-600">Track clicks and monitor link performance</p>
+        </div>
+        <div class="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 hover:shadow-lg transition-all duration-300">
+          <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+            <i class="fas fa-edit text-purple-600 text-xl"></i>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2">Custom Codes</h3>
+          <p class="text-sm text-gray-600">Create memorable, branded short links</p>
+        </div>
+        <div class="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 hover:shadow-lg transition-all duration-300">
+          <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+            <i class="fas fa-shield-alt text-orange-600 text-xl"></i>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2">Secure</h3>
+          <p class="text-sm text-gray-600">Enterprise-grade security and reliability</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Results section -->
-    <div id="result" class="hidden mt-4 bg-white p-4 rounded-lg shadow">
-      <p class="text-gray-700 font-medium">Your shortened URL:</p>
-      <div class="flex items-center gap-2 mt-2">
-        <input 
-          id="shortUrl" 
-          type="text" 
-          readonly 
-          class="flex-1 border border-gray-300 rounded p-2 text-blue-600 font-medium"
-        >
-        <button 
-          id="copyBtn" 
-          class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-3 rounded"
-        >
-          Copy
-        </button>
+  <!-- Main Form Section -->
+  <main class="pb-16">
+    <div class="max-w-2xl mx-auto px-6">
+      <!-- URL Shortener Form -->
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 p-8 mb-8">
+        <form id="shortenForm" class="space-y-6">
+          <div>
+            <label for="url" class="block text-sm font-semibold text-gray-900 mb-3">
+              <i class="fas fa-link mr-2 text-brand-blue"></i>
+              Enter your long URL
+            </label>
+            <div class="relative">
+              <input 
+                id="url" 
+                name="url" 
+                type="url" 
+                placeholder="https://example.com/very/long/url/that/needs/shortening" 
+                class="w-full px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-brand-blue/20 focus:border-brand-blue transition-all duration-200 text-lg"
+                required
+              >
+              <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                <i class="fas fa-globe text-gray-400"></i>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <label for="customCode" class="block text-sm font-semibold text-gray-900 mb-3">
+              <i class="fas fa-edit mr-2 text-brand-blue"></i>
+              Custom short code (optional)
+            </label>
+            <div class="relative">
+              <input 
+                id="customCode" 
+                name="customCode" 
+                type="text" 
+                placeholder="my-custom-code" 
+                class="w-full px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-brand-blue/20 focus:border-brand-blue transition-all duration-200 text-lg"
+                pattern="^[a-zA-Z0-9-_]+$"
+                title="Only letters, numbers, hyphens, and underscores allowed"
+              >
+              <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                <i class="fas fa-tag text-gray-400"></i>
+              </div>
+            </div>
+            <p class="text-sm text-gray-500 mt-2">
+              <i class="fas fa-info-circle mr-1"></i>
+              Leave empty to generate a random code
+            </p>
+          </div>
+
+          <button 
+            type="submit" 
+            id="submitBtn"
+            class="w-full bg-gradient-to-r from-brand-blue to-brand-dark hover:from-brand-dark hover:to-brand-blue text-white py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            <i class="fas fa-compress-alt mr-2"></i>
+            <span id="btnText">Shorten URL</span>
+          </button>
+        </form>
+
+        <!-- Loading State -->
+        <div id="loading" class="hidden text-center py-8">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue"></div>
+          <p class="text-gray-600 mt-4">Creating your short URL...</p>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div id="result" class="hidden bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 p-8">
+        <div class="text-center mb-6">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-check text-green-600 text-2xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2">Success!</h3>
+          <p class="text-gray-600">Your URL has been shortened</p>
+        </div>
+
+        <div class="space-y-6">
+          <!-- Short URL Display -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-900 mb-3">
+              <i class="fas fa-link mr-2 text-brand-blue"></i>
+              Your shortened URL
+            </label>
+            <div class="flex gap-3">
+              <input 
+                id="shortUrl" 
+                type="text" 
+                readonly 
+                class="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-brand-blue font-mono text-lg focus:outline-none"
+              >
+              <button 
+                id="copyBtn" 
+                class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-medium transition-all duration-200 flex items-center space-x-2"
+              >
+                <i class="fas fa-copy"></i>
+                <span id="copyText">Copy</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- URL Details -->
+          <div class="bg-gray-50 rounded-xl p-6">
+            <h4 class="font-semibold text-gray-900 mb-4">URL Details</h4>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Short Code:</span>
+                <code id="shortCode" class="font-mono text-brand-blue bg-white px-2 py-1 rounded"></code>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Click Count:</span>
+                <span id="clickCount" class="font-medium">0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Original URL:</span>
+                <a id="originalUrl" href="#" target="_blank" class="text-brand-blue hover:underline max-w-xs truncate"></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-3">
+            <button 
+              id="visitBtn" 
+              class="flex-1 bg-brand-blue hover:bg-brand-dark text-white py-3 px-4 rounded-xl font-medium transition-colors"
+            >
+              <i class="fas fa-external-link-alt mr-2"></i>
+              Visit Link
+            </button>
+            <button 
+              id="newUrlBtn" 
+              class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-xl font-medium transition-colors"
+            >
+              <i class="fas fa-plus mr-2"></i>
+              Shorten Another
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Info -->
+      <div class="mt-12 text-center">
+        <div class="inline-flex items-center space-x-6 bg-white/60 backdrop-blur-sm rounded-xl px-8 py-4 border border-gray-200/50">
+          <div class="flex items-center space-x-2 text-gray-600">
+            <i class="fas fa-code text-brand-blue"></i>
+            <span class="font-medium">Developer?</span>
+          </div>
+          <a href="/api-docs" class="text-brand-blue hover:text-brand-dark font-semibold transition-colors">
+            Check out our API Documentation →
+          </a>
+        </div>
       </div>
     </div>
   </main>
 
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="col-span-2">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-10 h-10 bg-gradient-to-r from-brand-blue to-brand-dark rounded-xl flex items-center justify-center">
+              <i class="fas fa-link text-white"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold">Code Alpha URL Shortener</h3>
+              <p class="text-gray-400 text-sm">Internship Project</p>
+            </div>
+          </div>
+          <p class="text-gray-400 mb-4 max-w-md">
+            A comprehensive URL shortening service featuring custom codes, analytics tracking, 
+            and a full REST API. Built as part of the Code Alpha internship program.
+          </p>
+          <div class="flex space-x-4">
+            <a href="https://github.com/yourusername/url-shortener" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fab fa-github text-xl"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/kodevoid" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fab fa-linkedin text-xl"></i>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Features</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li>• URL Shortening</li>
+            <li>• Custom Short Codes</li>
+            <li>• Click Analytics</li>
+            <li>• REST API</li>
+            <li>• Bulk Operations</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Resources</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="/api-docs" class="hover:text-white transition-colors">API Documentation</a></li>
+            <li><a href="https://github.com/yourusername/url-shortener" target="_blank" class="hover:text-white transition-colors">Source Code</a></li>
+            <li><a href="https://www.linkedin.com/in/kodevoid" target="_blank" class="hover:text-white transition-colors">Developer Profile</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+        <p class="text-gray-400 text-sm">
+          © 2024 Code Alpha URL Shortener. Built with ❤️ during internship program.
+        </p>
+      </div>
+    </div>
+  </footer>
+
 <script>
   const form = document.getElementById("shortenForm");
   const resultDiv = document.getElementById("result");
+  const loadingDiv = document.getElementById("loading");
   const shortUrlInput = document.getElementById("shortUrl");
   const copyBtn = document.getElementById("copyBtn");
+  const copyText = document.getElementById("copyText");
+  const submitBtn = document.getElementById("submitBtn");
+  const btnText = document.getElementById("btnText");
+  const visitBtn = document.getElementById("visitBtn");
+  const newUrlBtn = document.getElementById("newUrlBtn");
+  
+  // Result elements
+  const shortCode = document.getElementById("shortCode");
+  const clickCount = document.getElementById("clickCount");
+  const originalUrl = document.getElementById("originalUrl");
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
+    
     const url = document.getElementById("url").value.trim();
+    const customCode = document.getElementById("customCode").value.trim();
+    
     if (!url) return;
 
+    // Show loading state
+    loadingDiv.classList.remove("hidden");
+    resultDiv.classList.add("hidden");
+    submitBtn.disabled = true;
+    btnText.textContent = "Creating...";
+
     try {
-      const response = await fetch("/short", {
+      const requestBody = { longUrl: url };
+      if (customCode) {
+        requestBody.customCode = customCode;
+      }
+
+      const response = await fetch("/urls", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to shorten URL");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to shorten URL");
       }
 
       const data = await response.json();
-      shortUrlInput.value = data.short_url;
+      
+      // Populate result data
+      shortUrlInput.value = data.shortUrl;
+      shortCode.textContent = data.id;
+      clickCount.textContent = data.clickCount;
+      originalUrl.textContent = data.longUrl;
+      originalUrl.href = data.longUrl;
+      
+      // Show result
+      loadingDiv.classList.add("hidden");
       resultDiv.classList.remove("hidden");
+      
+      // Scroll to result
+      resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
     } catch (err) {
-      alert(err.message);
+      loadingDiv.classList.add("hidden");
+      
+      // Show error with better styling
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'bg-red-50 border border-red-200 rounded-xl p-4 mt-6';
+      errorDiv.innerHTML = `
+        <div class="flex items-center">
+          <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+          <div>
+            <h4 class="font-semibold text-red-800">Error</h4>
+            <p class="text-red-700 text-sm">${err.message}</p>
+          </div>
+        </div>
+      `;
+      
+      // Remove existing error if any
+      const existingError = document.querySelector('.bg-red-50');
+      if (existingError) existingError.remove();
+      
+      form.parentNode.appendChild(errorDiv);
+      
+      // Auto-remove error after 5 seconds
+      setTimeout(() => errorDiv.remove(), 5000);
+    } finally {
+      submitBtn.disabled = false;
+      btnText.textContent = "Shorten URL";
     }
   });
 
-  copyBtn.addEventListener("click", () => {
-    shortUrlInput.select();
-    navigator.clipboard.writeText(shortUrlInput.value).then(() => {
-      copyBtn.textContent = "Copied!";
-      setTimeout(() => (copyBtn.textContent = "Copy"), 2000);
-    });
+  // Copy functionality
+  copyBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(shortUrlInput.value);
+      copyText.textContent = "Copied!";
+      copyBtn.classList.add("text-green-600");
+      setTimeout(() => {
+        copyText.textContent = "Copy";
+        copyBtn.classList.remove("text-green-600");
+      }, 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      shortUrlInput.select();
+      document.execCommand('copy');
+      copyText.textContent = "Copied!";
+      setTimeout(() => copyText.textContent = "Copy", 2000);
+    }
   });
+
+  // Visit button functionality
+  visitBtn.addEventListener("click", () => {
+    window.open(shortUrlInput.value, '_blank');
+  });
+
+  // New URL button functionality
+  newUrlBtn.addEventListener("click", () => {
+    form.reset();
+    resultDiv.classList.add("hidden");
+    document.getElementById("url").focus();
+  });
+
+  // Auto-focus on URL input
+  document.getElementById("url").focus();
 </script>
 </body>
 </html>

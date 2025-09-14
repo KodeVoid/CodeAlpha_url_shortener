@@ -1,5 +1,5 @@
 import os
-from flask import request, jsonify, redirect
+from flask import request, jsonify, redirect,render_template
 from app.connect_db import get_db_connection
 import string
 import random
@@ -14,10 +14,13 @@ class Routes(object):
     
     def register_routes(self):  # Fixed: Added self parameter
         # Fixed: Correct syntax for route registration
+        self.app.route('/api-docs')(self.api_docs)
         self.app.route('/urls', methods=['GET'])(self.get_urls)
         self.app.route('/urls', methods=['POST'])(self.create_short_url)
         self.app.route('/urls/<id>', methods=['GET'])(self.get_url)  # Fixed: Added missing /
         self.app.route('/<id>/redirect', methods=['GET'])(self.redirect_to_original_url)  # Fixed: Better route pattern
+    def api_docs(request):
+    	return  render_template('docs.html')
     
     def generate_code(self, length=6):
         """Generate a random short code"""
