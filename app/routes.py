@@ -103,7 +103,7 @@ class Routes(object):
             conn.close()
     
     def create_short_url(self):  # Fixed: Added self parameter
-        """POST /v1/urls - Create a new short URL"""
+        """POST /urls - Create a new short URL"""
         try:
             data = request.get_json()
             

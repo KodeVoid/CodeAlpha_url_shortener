@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Alpha URL Shortener API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'api-blue': '#0f6ab4',
+              'api-green': '#10a54a',
+              'api-orange': '#c5862b',
+              'api-red': '#a41e22'
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+    <div class="max-w-6xl mx-auto px-6 py-8">
+      <!-- Header -->
+      <header class="mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Code Alpha URL Shortener API</h1>
+        <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <p class="text-gray-700 mb-4">A comprehensive URL shortening service built as part of the Code Alpha internship task.</p>
+          <div class="mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Features:</h3>
+            <ul class="list-disc list-inside space-y-1 text-gray-700">
+              <li>Create shortened URLs from long URLs</li>
+              <li>Retrieve paginated lists of all shortened URLs</li>
+              <li>Get specific URL details by ID</li>
+              <li>Redirect users from short codes to original URLs</li>
+              <li>Analytics tracking (click counts)</li>
+            </ul>
+          </div>
+          <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+            <div>Contact: <a href="https://void-iota-ashen.vercel.app/" class="text-blue-600 hover:text-blue-800 underline">Kendrick Olori</a></div>
+            <div class="font-semibold">Version: 1.0</div>
+          </div>
+        </div>
+        <div class="text-sm text-gray-600">
+          <div>Base URL: <code class="bg-gray-200 px-2 py-1 rounded">https://codealpha-url-shortener.onrender.com</code>Production Server</div>
+        </div>
+      </header>
+
+      <!-- Table of Contents -->
+      <section class="mb-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Table of Contents</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-white rounded-lg shadow-sm border p-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">URLs</h3>
+            <ul class="space-y-2">
+              <li>
+                <a href="#getUrls" class="flex items-center text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded transition-colors">
+                  <span class="bg-api-blue text-white text-xs px-2 py-1 rounded mr-3 font-mono">GET</span>
+                  /urls
+                </a>
+              </li>
+              <li>
+                <a href="#createShortUrl" class="flex items-center text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded transition-colors">
+                  <span class="bg-api-green text-white text-xs px-2 py-1 rounded mr-3 font-mono">POST</span>
+                  /urls
+                </a>
+              </li>
+              <li>
+                <a href="#getUrlById" class="flex items-center text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded transition-colors">
+                  <span class="bg-api-blue text-white text-xs px-2 py-1 rounded mr-3 font-mono">GET</span>
+                  /urls/{id}
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="bg-white rounded-lg shadow-sm border p-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Redirects</h3>
+            <ul class="space-y-2">
+              <li>
+                <a href="#redirectToOriginalUrl" class="flex items-center text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded transition-colors">
+                  <span class="bg-api-blue text-white text-xs px-2 py-1 rounded mr-3 font-mono">GET</span>
+                  /{id}/redirect
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- API Methods -->
+      <section class="space-y-12">
+        <!-- URLs Section -->
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900 mb-8">URLs</h2>
+          
+          <!-- Get All URLs -->
+          <div id="getUrls" class="bg-white rounded-lg shadow-sm border overflow-hidden mb-8">
+            <div class="bg-api-blue text-white p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <span class="bg-white bg-opacity-20 px-3 py-1 rounded text-sm font-mono mr-4">GET</span>
+                  <code class="text-lg font-mono">/urls</code>
+                </div>
+                <a href="#" class="text-blue-100 hover:text-white text-sm">↑ Up</a>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Get all shortened URLs</h3>
+              <p class="text-gray-600 mb-6">Returns a paginated list of all shortened URLs, sorted by creation date (newest first). Supports pagination with page and limit parameters.</p>
+              
+              <!-- Query Parameters -->
+              <div class="mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Query Parameters</h4>
+                <div class="space-y-3">
+                  <div class="bg-gray-50 rounded p-4">
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                      <code class="bg-gray-200 px-2 py-1 rounded text-sm">page</code>
+                      <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">optional</span>
+                      <span class="text-xs text-gray-500">integer, min: 1, default: 1</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Page number for pagination</p>
+                  </div>
+                  <div class="bg-gray-50 rounded p-4">
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                      <code class="bg-gray-200 px-2 py-1 rounded text-sm">limit</code>
+                      <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">optional</span>
+                      <span class="text-xs text-gray-500">integer, min: 1, max: 100, default: 10</span>
+                    </div>
+                    <p class="text-sm text-gray-600">Number of items per page</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Example Response -->
+              <div class="mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Example Response</h4>
+                <pre class="bg-gray-100 p-4 rounded text-sm overflow-x-auto"><code>{
+  "page": 1,
+  "limit": 10,
+  "totalPages": 1,
+  "totalItems": 3,
+  "items": [
+    {
+      "id": "abc123",
+      "shortUrl": "http://localhost:5000/abc123",
+      "longUrl": "https://www.google.com",
+      "clickCount": 0
+    },
+    {
+      "id": "def456",
+      "shortUrl": "http://localhost:5000/def456",
+      "longUrl": "https://www.github.com",
+      "clickCount": 15
+    }
+  ]
+}</code></pre>
+              </div>
+
+              <!-- Responses -->
+              <div>
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Responses</h4>
+                <div class="space-y-4">
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-green-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-green-800">200</span> - Successfully retrieved paginated list of URLs
+                    </div>
+                  </div>
+                  
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-red-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-red-800">400</span> - Invalid pagination parameters
+                    </div>
+                    <div class="p-4">
+                      <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code>{"error":"validation_error","message":"Page and limit must be positive integers"}</code></pre>
+                    </div>
+                  </div>
+
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-red-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-red-800">500</span> - Internal server error
+                    </div>
+                    <div class="p-4">
+                      <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code>{"error":"internal_error","message":"An unexpected error occurred while retrieving URLs"}</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Create Short URL -->
+          <div id="createShortUrl" class="bg-white rounded-lg shadow-sm border overflow-hidden mb-8">
+            <div class="bg-api-green text-white p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <span class="bg-white bg-opacity-20 px-3 py-1 rounded text-sm font-mono mr-4">POST</span>
+                  <code class="text-lg font-mono">/urls</code>
+                </div>
+                <a href="#" class="text-green-100 hover:text-white text-sm">↑ Up</a>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Create a shortened URL</h3>
+              <p class="text-gray-600 mb-6">Creates a shortened URL for the provided long URL. Optionally accepts a custom code for the short URL.</p>
+              
+              <!-- Request Body -->
+              <div class="mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Request Body</h4>
+                <div class="bg-gray-50 rounded p-4 mb-4">
+                  <div class="mb-3">
+                    <span class="text-sm text-gray-600">Content-Type: </span>
+                    <code class="bg-gray-200 px-2 py-1 rounded text-sm">application/json</code>
+                  </div>
+                  <div class="space-y-3">
+                    <div class="bg-white rounded p-3 border">
+                      <div class="flex items-center gap-2 mb-1">
+                        <code class="text-sm">longUrl</code>
+                        <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">required</span>
+                        <span class="text-xs text-gray-500">string (uri)</span>
+                      </div>
+                      <p class="text-sm text-gray-600">The long URL to be shortened</p>
+                    </div>
+                    <div class="bg-white rounded p-3 border">
+                      <div class="flex items-center gap-2 mb-1">
+                        <code class="text-sm">customCode</code>
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">optional</span>
+                        <span class="text-xs text-gray-500">string (pattern: ^[a-zA-Z0-9]+$, 1-50 chars)</span>
+                      </div>
+                      <p class="text-sm text-gray-600">Optional custom short code (if not provided, one will be generated)</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="mb-4">
+                  <h5 class="font-semibold mb-2">Example - Basic URL shortening:</h5>
+                  <pre class="bg-white p-3 rounded border text-sm overflow-x-auto"><code>{
+  "longUrl": "https://www.google.com"
+}</code></pre>
+                </div>
+                
+                <div>
+                  <h5 class="font-semibold mb-2">Example - URL with custom code:</h5>
+                  <pre class="bg-white p-3 rounded border text-sm overflow-x-auto"><code>{
+  "longUrl": "https://www.example.com/very/long/path",
+  "customCode": "mycode"
+}</code></pre>
+                </div>
+              </div>
+
+              <!-- Example Response -->
+              <div class="mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Example Response</h4>
+                <pre class="bg-gray-100 p-4 rounded text-sm overflow-x-auto"><code>{
+  "id": "xyz789",
+  "shortUrl": "http://localhost:5000/xyz789",
+  "longUrl": "https://www.google.com",
+  "clickCount": 0
+}</code></pre>
+              </div>
+
+              <!-- Responses -->
+              <div>
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Responses</h4>
+                <div class="space-y-4">
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-green-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-green-800">201</span> - Successfully created shortened URL
+                    </div>
+                  </div>
+                  
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-red-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-red-800">400</span> - Invalid request - missing or invalid URL
+                    </div>
+                    <div class="p-4 space-y-3">
+                      <div>
+                        <p class="text-sm font-medium mb-1">Missing longUrl field:</p>
+                        <pre class="bg-gray-100 p-2 rounded text-xs overflow-x-auto"><code>{"error":"validation_error","message":"longUrl is required"}</code></pre>
+                      </div>
+                      <div>
+                        <p class="text-sm font-medium mb-1">Invalid URL format:</p>
+                        <pre class="bg-gray-100 p-2 rounded text-xs overflow-x-auto"><code>{"error":"validation_error","message":"URL must start with http:// or https://"}</code></pre>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-red-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-red-800">409</span> - Custom code already exists
+                    </div>
+                    <div class="p-4">
+                      <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code>{"error":"conflict_error","message":"Custom code already exists"}</code></pre>
+                    </div>
+                  </div>
+
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-red-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-red-800">500</span> - Internal server error
+                    </div>
+                    <div class="p-4">
+                      <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code>{"error":"internal_error","message":"Failed to create short URL"}</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Get URL by ID -->
+          <div id="getUrlById" class="bg-white rounded-lg shadow-sm border overflow-hidden mb-8">
+            <div class="bg-api-blue text-white p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <span class="bg-white bg-opacity-20 px-3 py-1 rounded text-sm font-mono mr-4">GET</span>
+                  <code class="text-lg font-mono">/urls/{id}</code>
+                </div>
+                <a href="#" class="text-blue-100 hover:text-white text-sm">↑ Up</a>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Get a specific URL by ID</h3>
+              <p class="text-gray-600 mb-6">Retrieves details of a specific shortened URL by its short code ID.</p>
+              
+              <!-- Parameters -->
+              <div class="mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Path Parameters</h4>
+                <div class="bg-gray-50 rounded p-4">
+                  <div class="flex flex-wrap items-center gap-2 mb-2">
+                    <code class="bg-gray-200 px-2 py-1 rounded text-sm">id</code>
+                    <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">required</span>
+                    <span class="text-xs text-gray-500">string (pattern: ^[a-zA-Z0-9]+$)</span>
+                  </div>
+                  <p class="text-sm text-gray-600">The short code identifier</p>
+                  <p class="text-xs text-gray-500 mt-1">Example: abc123</p>
+                </div>
+              </div>
+
+              <!-- Example Response -->
+              <div class="mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Example Response</h4>
+                <pre class="bg-gray-100 p-4 rounded text-sm overflow-x-auto"><code>{
+  "id": "abc123",
+  "shortUrl": "http://localhost:5000/abc123",
+  "longUrl": "https://www.google.com",
+  "clickCount": 42
+}</code></pre>
+              </div>
+
+              <!-- Responses -->
+              <div>
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Responses</h4>
+                <div class="space-y-4">
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-green-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-green-800">200</span> - Successfully retrieved URL details
+                    </div>
+                  </div>
+                  
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-red-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-red-800">404</span> - URL not found
+                    </div>
+                    <div class="p-4">
+                      <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code>{"error":"not_found","message":"URL not found"}</code></pre>
+                    </div>
+                  </div>
+
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-red-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-red-800">500</span> - Internal server error
+                    </div>
+                    <div class="p-4">
+                      <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code>{"error":"internal_error","message":"An unexpected error occurred"}</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Redirects Section -->
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900 mb-8">Redirects</h2>
+          
+          <!-- Redirect to Original URL -->
+          <div id="redirectToOriginalUrl" class="bg-white rounded-lg shadow-sm border overflow-hidden">
+            <div class="bg-api-blue text-white p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <span class="bg-white bg-opacity-20 px-3 py-1 rounded text-sm font-mono mr-4">GET</span>
+                  <code class="text-lg font-mono">/{id}/redirect</code>
+                </div>
+                <a href="#" class="text-blue-100 hover:text-white text-sm">↑ Up</a>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Redirect to original URL</h3>
+              <p class="text-gray-600 mb-6">Redirects the user to the original long URL associated with the short code. This endpoint increments the click count for analytics.</p>
+              
+              <!-- Parameters -->
+              <div class="mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Path Parameters</h4>
+                <div class="bg-gray-50 rounded p-4">
+                  <div class="flex flex-wrap items-center gap-2 mb-2">
+                    <code class="bg-gray-200 px-2 py-1 rounded text-sm">id</code>
+                    <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">required</span>
+                    <span class="text-xs text-gray-500">string (pattern: ^[a-zA-Z0-9]+$)</span>
+                  </div>
+                  <p class="text-sm text-gray-600">The short code to redirect</p>
+                  <p class="text-xs text-gray-500 mt-1">Example: abc123</p>
+                </div>
+              </div>
+
+              <!-- Responses -->
+              <div>
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Responses</h4>
+                <div class="space-y-4">
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-green-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-green-800">302</span> - Redirect to the original URL
+                    </div>
+                    <div class="p-4">
+                      <div class="mb-2">
+                        <span class="font-medium">Headers:</span>
+                      </div>
+                      <div class="bg-gray-50 p-3 rounded">
+                        <code class="text-sm">Location: https://www.google.com</code>
+                        <p class="text-xs text-gray-600 mt-1">The original long URL</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-red-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-red-800">404</span> - Short URL not found
+                    </div>
+                    <div class="p-4">
+                      <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code>{"error":"not_found","message":"Short URL not found"}</code></pre>
+                    </div>
+                  </div>
+
+                  <div class="border rounded-lg overflow-hidden">
+                    <div class="bg-red-50 px-4 py-2 border-b">
+                      <span class="font-semibold text-red-800">500</span> - Internal server error
+                    </div>
+                    <div class="p-4">
+                      <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code>{"error":"internal_error","message":"An unexpected error occurred"}</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Models Section -->
+      <section class="mt-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Data Models</h2>
+        
+        <div class="grid gap-6">
+          <!-- UrlItem -->
+          <div class="bg-white rounded-lg shadow-sm border p-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">UrlItem</h3>
+            <p class="text-gray-600 mb-4">A shortened URL item</p>
+            <div class="space-y-3">
+              <div class="bg-gray-50 rounded p-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <code class="text-sm">id</code>
+                  <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">required</span>
+                  <span class="text-xs text-gray-500">string</span>
+                </div>
+                <p class="text-sm text-gray-600">The short code identifier</p>
+                <p class="text-xs text-gray-500 mt-1">Example: "abc123"</p>
+              </div>
+              <div class="bg-gray-50 rounded p-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <code class="text-sm">shortUrl</code>
+                  <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">required</span>
+                  <span class="text-xs text-gray-500">string (uri)</span>
+                </div>
+                <p class="text-sm text-gray-600">The complete shortened URL</p>
+                <p class="text-xs text-gray-500 mt-1">Example: "http://localhost:5000/abc123"</p>
+              </div>
+              <div class="bg-gray-50 rounded p-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <code class="text-sm">longUrl</code>
+                  <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">required</span>
+                  <span class="text-xs text-gray-500">string (uri)</span>
+                </div>
+                <p class="text-sm text-gray-600">The original long URL</p>
+                <p class="text-xs text-gray-500 mt-1">Example: "https://www.google.com"</p>
+              </div>
+              <div class="bg-gray-50 rounded p-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <code class="text-sm">clickCount</code>
+                  <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">required</span>
+                  <span class="text-xs text-gray-500">integer (minimum: 0)</span>
+                </div>
+                <p class="text-sm text-gray-600">Number of times this short URL has been clicked</p>
+                <p class="text-xs text-gray-500 mt-1">Example: 42</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- CreateUrlRequest -->
+          <div class="bg-white rounded-lg shadow-sm border p-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">CreateUrlRequest</h3>
+            <p class="text-gray-600 mb-4">Request payload for creating a shortened URL</p>
+            <div class="space-y-3">
+              <div class="bg-gray-50 rounded p-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <code class="text-sm">longUrl</code>
+                  <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">required</span>
+                  <span class="text-xs text-gray-500">string (uri)</span>
+                </div>
+                <p class="text-sm text-gray-600">The long URL to be shortened</p>
+                <p class="text-xs text-gray-500 mt-1">Example: "https://www.example.com/very/long/path/to/resource"</p>
+              </div>
+              <div class="bg-gray-50 rounded p-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <code class="text-sm">customCode</code>
+                  <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">optional</span>
+                  <span class="text-xs text-gray-500">string (pattern: ^[a-zA-Z0-9]+$, 1-50 chars)</span>
