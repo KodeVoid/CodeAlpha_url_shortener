@@ -12,12 +12,12 @@ info:
     - Redirect users from short codes to original URLs
     - Analytics tracking (click counts)
   contact:
-    name: Code Alpha Intern
+    name: Kendrick Olori
     url: https://www.linkedin.com/in/kodevoid
 
 servers:
-  - url: http://localhost:5000
-    description: Development server (Base URL for redirects)
+  - url: http://https://codealpha-url-shortener.onrender.com
+    description:Production server
 
 paths:
   # API Endpoints
@@ -67,11 +67,11 @@ paths:
                     totalItems: 3
                     items:
                       - id: "abc123"
-                        shortUrl: "http://localhost:5000/abc123"
+                        shortUrl: "http://https://codealpha-url-shortener.onrender.com/abc123"
                         longUrl: "https://www.google.com"
                         clickCount: 0
                       - id: "def456"
-                        shortUrl: "http://localhost:5000/def456"
+                        shortUrl: "http://https://codealpha-url-shortener.onrender.com/def456"
                         longUrl: "https://www.github.com"
                         clickCount: 15
         '400':
@@ -129,7 +129,7 @@ paths:
                   summary: Newly created short URL
                   value:
                     id: "xyz789"
-                    shortUrl: "http://localhost:5000/xyz789"
+                    shortUrl: "http://https://codealpha-url-shortener.onrender.com/xyz789"
                     longUrl: "https://www.google.com"
                     clickCount: 0
         '400':
@@ -194,7 +194,7 @@ paths:
                 $ref: '#/components/schemas/UrlItem'
               example:
                 id: "abc123"
-                shortUrl: "http://localhost:5000/abc123"
+                shortUrl: "http://https://codealpha-url-shortener.onrender.com/abc123"
                 longUrl: "https://www.google.com"
                 clickCount: 42
         '404':
@@ -278,7 +278,7 @@ components:
           type: string
           format: uri
           description: The complete shortened URL
-          example: "http://localhost:5000/abc123"
+          example: "http://https://codealpha-url-shortener.onrender.com/abc123"
         longUrl:
           type: string
           format: uri
